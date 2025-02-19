@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="purchase_orders_template" name="Purchase Orders">
+        <t t-call="website.layout">
+            <div class="container">
+                <h1>IT Purchase Orders</h1>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="purchase_orders" t-as="order">
+                            <tr>
+                                <td>
+                                    <a t-attf-href="/it_procurement/purchase_order/#{order.id}">
+                                        <t t-esc="order.name"/>
+                                    </a>
+                                </td>
+                                <td><t t-esc="order.partner_id.name"/></td>
+                                <td><t t-esc="order.amount_total"/></td>
+                                <td><t t-esc="order.state"/></td>
+                                <td>
+                                    <button t-if="user_has_groups('it_procurement.group_coo') and not order.confirmed_by_coo"
+                                            class="btn btn-primary approve-btn"
+                                            t-att-data-order-id="order.id">
+                                        Confirm (COO)
+                                    </button>
+                                    <button t-if="user_has_groups('it_procurement.group_md') and not order.approved_by_md"
+                                            class="btn btn-success approve-btn"
+                                            t-att-data-order-id="order.id">
+                                        Approve (MD)
+                                    </button>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="purchase_order_detail_template" name="Purchase Order Detail">
+        <t t-call="website.layout">
+            <div class="container">
+                <h1>Purchase Order: <t t-esc="order.name"/></h1>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Details</h3>
+                        <p><strong>Vendor:</strong> <t t-esc="order.partner_id.name"/></p>
+                        <p><strong>Amount:</strong> <t t-esc="order.amount_total"/></p>
+                        <p><strong>Status:</strong> <t t-esc="order.state"/></p>
+                        <p><strong>COO Confirmation:</strong> <t t-esc="order.confirmed_by_coo"/></p>
+                        <p><strong>MD Approval:</strong> <t t-esc="order.approved_by_md"/></p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="assets_frontend" inherit_id="website.assets_frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript">
+                odoo.define('it_procurement.purchase_approval', function (require) {
+                    'use strict';
+                    
+                    var ajax = require('web.ajax');
+                    
+                    $(document).ready(function () {
+                        $('.approve-btn').click(function () {
+                            var orderId = $(this).data('order-id');
+                            ajax.jsonRpc('/it_procurement/approve_purchase/' + orderId, 'call', {})
+                                .then(function (result) {
+                                    if (result.status === 'success') {
+                                        location.reload();
+                                    } else {
+                                        alert(result.message);
+                                    }
+                                });
+                        });
+                    });
+                });
+            </script>
+        </xpath>
+    </template>
+
+    <template id="vendor_portal_orders" name="Vendor Purchase Orders">
+        <t t-call="portal.portal_layout">
+            <div class="container">
+                <h1>My Purchase Orders</h1>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="purchase_orders" t-as="order">
+                            <tr>
+                                <td><t t-esc="order.name"/></td>
+                                <td><t t-esc="order.date_order"/></td>
+                                <td><t t-esc="order.amount_total"/></td>
+                                <td><t t-esc="order.state"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo> 
