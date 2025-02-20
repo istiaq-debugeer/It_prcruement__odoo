@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="create_purchase_order" model="ir.ui.view">
+            <field name="name">it.create.purchase.order</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <form string="Create Purchase Order">
+                    <sheet>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="amount_total"/>
+                        </group>
+                        <footer>
+                            <button type="object" name="confirm_purchase_order" string="Confirm Order" class="oe_highlight"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

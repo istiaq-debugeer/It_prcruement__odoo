@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_it_purchase_order_form" model="ir.ui.view">
+        <field name="name">it.purchase.order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_ref']" position="after">
+                <field name="equipment_type"/>
+                <field name="priority"/>
+                <field name="requested_by"/>
+                <field name="expected_delivery_date"/>
+                <field name="technical_specifications"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_it_purchase_order_tree" model="ir.ui.view">
+        <field name="name">it.purchase.order.tree</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="equipment_type"/>
+                <field name="priority"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- JS for Purchase Approval -->
+    <record id="it_procurement_assets" model="ir.asset">
+    <field name="name">Purchase Approval Assets</field>
+    <field name="active" eval="True"/>
+    <field name="priority" eval="20"/>
+    <field name="target">website</field>
+    <field name="path">/it_procurement/static/src/js/purchase_approval.js</field>
+</record>
+</odoo>
